@@ -4,13 +4,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 @Entity
 public class VehicleLocation {
 
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	private String vehicleId;
+    @Id
+    @SequenceGenerator(name="vehile_location_seq", sequenceName="vehile_location_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="vehile_location_seq")
+    private int vehicleId;
 	
 	private String id;
 	private String routeTag;

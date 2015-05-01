@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 import org.slf4j.Logger;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.XmlMappingException;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.egalitech.ttc.dao.VehicleLocationRepository;
@@ -37,14 +37,23 @@ public class DataCollector {
 	@Autowired
 	private VehicleLocationRepository repo;
 	
-	@Scheduled( fixedDelay=10000, initialDelay=1000)
+	//@Scheduled( fixedDelay=10000, initialDelay=1000)
 	public void run() {
 		try {
-			VehicleLocations l = (VehicleLocations)unmarshaller.unmarshal( new StreamSource( new URL( url + lastTime).openStream()));
-			lastTime = l.getLastTime().getTime();
-			
-			List<VehicleLocation> vehicleLocations = new ArrayList<>();
-			for( Vehicle xml : l.getVehicles()) {
+			save(new StreamSource(new URL(url + lastTime).openStream()));
+		} catch (XmlMappingException | IOException e) {
+			logger.error("Error reading URL {}{}", url, lastTime, e);
+		}
+	}
+	
+	public void save(Source source) throws XmlMappingException, IOException {
+		VehicleLocations l = (VehicleLocations)unmarshaller.unmarshal( source);
+		lastTime = l.getLastTime().getTime();
+		
+		List<VehicleLocation> vehicleLocations = new ArrayList<>();
+		List<Vehicle> xmlVehicles = l.getVehicles();
+		if( xmlVehicles != null) {
+			for( Vehicle xml : xmlVehicles) {
 				VehicleLocation model = new VehicleLocation();
 				model.setDirTag( xml.getDirTag());
 				model.setHeading( xml.getHeading());
@@ -57,10 +66,8 @@ public class DataCollector {
 				model.setTime( lastTime);
 				vehicleLocations.add(model);
 			}
-			logger.info("Saving {} vehicle location reports", vehicleLocations.size());
-			repo.save(vehicleLocations);
-		} catch (XmlMappingException | IOException e) {
-			logger.error("Error reading URL {}{}", url, lastTime, e);
 		}
+		logger.debug("Saving {} vehicle location reports", vehicleLocations.size());
+		repo.save(vehicleLocations);
 	}
 }
