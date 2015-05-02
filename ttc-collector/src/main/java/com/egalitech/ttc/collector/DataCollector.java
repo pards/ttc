@@ -20,6 +20,7 @@ import com.egalitech.ttc.dao.VehicleLocationRepository;
 import com.egalitech.ttc.model.VehicleLocation;
 import com.egalitech.ttc.xml.Vehicle;
 import com.egalitech.ttc.xml.VehicleLocations;
+import com.vividsolutions.jts.geom.Point;
 
 @Component
 public class DataCollector {
@@ -64,6 +65,7 @@ public class DataCollector {
 				model.setRouteTag( xml.getRouteTag());
 				model.setSecsSinceReport( xml.getSecsSinceReport());
 				model.setTime( lastTime);
+				model.setLocation( new Point(xml.getLon(), xml.getLat()));
 				vehicleLocations.add(model);
 			}
 		}

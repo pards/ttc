@@ -6,12 +6,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 
+import org.hibernate.annotations.Type;
+
+import com.vividsolutions.jts.geom.Point;
+
 @Entity
 public class VehicleLocation {
 
     @Id
-    @SequenceGenerator(name="vehile_location_seq", sequenceName="vehile_location_seq")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="vehile_location_seq")
+    @SequenceGenerator(name="vehicle_location_seq", sequenceName="vehicle_location_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="vehicle_location_seq")
     private int vehicleId;
 	
 	private String id;
@@ -24,6 +28,15 @@ public class VehicleLocation {
 	private boolean predictable;
 	private long time;
 	
+	@Type(type="org.hibernate.spatial.GeometryType")
+	private Point location;
+	
+	public int getVehicleId() {
+		return vehicleId;
+	}
+	public void setVehicleId(int vehicleId) {
+		this.vehicleId = vehicleId;
+	}
 	public String getId() {
 		return id;
 	}
@@ -78,5 +91,10 @@ public class VehicleLocation {
 	public void setTime(long time) {
 		this.time = time;
 	}
-
+	public Point getLocation() {
+		return location;
+	}
+	public void setLocation(Point location) {
+		this.location = location;
+	}
 }

@@ -29,13 +29,15 @@ public class FileLoader {
 			BufferedReader br = new BufferedReader(new InputStreamReader(in))
 		) {
 			String line;
-			while ((line = br.readLine()) != null) {
+			int count = 0;
+			while ((line = br.readLine()) != null && count < 10) {
 				try{
 					dataCollector.save( new StringSource( line));
 				}
 				catch(Exception x) {
 					logger.error("{}: {}", x.toString(), line);
 				}
+				count++;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

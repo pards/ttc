@@ -11,4 +11,6 @@ create table vehicle_location (
 	time bigint
 );
 
-create sequence vehile_location_seq;
+SELECT AddGeometryColumn ('vehicle_location','location',4326,'POINT',2);
+
+create sequence vehicle_location_seq;
