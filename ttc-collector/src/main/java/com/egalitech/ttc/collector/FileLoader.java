@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +19,7 @@ public class FileLoader {
 	@Autowired
 	private DataCollector dataCollector;
 	
-	@PostConstruct
+	//@PostConstruct
 	public void loadFile() {
 		logger.info("Loading file");
 		try (
@@ -32,7 +30,7 @@ public class FileLoader {
 			int count = 0;
 			while ((line = br.readLine()) != null && count < 10) {
 				try{
-					dataCollector.save( new StringSource( line));
+					dataCollector.saveVehicleLocations( new StringSource( line));
 				}
 				catch(Exception x) {
 					logger.error("{}: {}", x.toString(), line);

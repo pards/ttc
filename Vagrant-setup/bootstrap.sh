@@ -8,7 +8,8 @@ APP_DB_PASS=ttcpwd
 APP_DB_NAME=$APP_DB_USER
 
 # Edit the following to change the version of PostgreSQL that is installed
-PG_VERSION=9.3
+PG_VERSION=9.4
+POSTGIS_VERSION=2.1
 
 ###########################################################
 # Changes below this line are probably not necessary
@@ -63,7 +64,7 @@ fi
 apt-get update
 apt-get -y upgrade
 
-apt-get -y install "postgresql-$PG_VERSION" "postgresql-contrib-$PG_VERSION"
+apt-get -y install "postgresql-$PG_VERSION" "postgresql-contrib-$PG_VERSION" "postgresql-$PG_VERSION-postgis-$POSTGIS_VERSION"
 
 PG_CONF="/etc/postgresql/$PG_VERSION/main/postgresql.conf"
 PG_HBA="/etc/postgresql/$PG_VERSION/main/pg_hba.conf"

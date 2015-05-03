@@ -9,7 +9,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name="body")
-public class VehicleLocations {
+public class Body {
+
+	@XmlElement(name="route")
+	private List<Route> routes;
 
 	@XmlElement(name="vehicle")
 	private List<Vehicle> vehicles;
@@ -32,4 +35,13 @@ public class VehicleLocations {
 	public void setLastTime(LastTime lastTime) {
 		this.lastTime = lastTime;
 	}
+	
+	public List<Route> getRoutes() {
+		return routes;
+	}
+
+	public void setRoutes(List<Route> routes) {
+		this.routes = routes;
+	}
+	
 }

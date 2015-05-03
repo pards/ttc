@@ -2,9 +2,9 @@ package com.egalitech.ttc.collector;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
@@ -17,10 +17,9 @@ import org.springframework.oxm.XmlMappingException;
 import org.springframework.stereotype.Component;
 
 import com.egalitech.ttc.dao.VehicleLocationRepository;
+import com.egalitech.ttc.model.Route;
 import com.egalitech.ttc.model.VehicleLocation;
-import com.egalitech.ttc.xml.Vehicle;
-import com.egalitech.ttc.xml.VehicleLocations;
-import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.io.ParseException;
 
 @Component
 public class DataCollector {
@@ -28,7 +27,13 @@ public class DataCollector {
 	private static final Logger logger = LoggerFactory.getLogger(DataCollector.class);
 	
 	@Value("${ttc.url.vehicle.locations}")
-	private String url;
+	private String vehicleLocationsUrl;
+	
+	@Value("${ttc.url.routes}")
+	private String routesUrl;
+	
+	@Value("${ttc.url.stops}")
+	private String stopsUrl;
 	
 	private long lastTime = 0;
 	
@@ -36,40 +41,43 @@ public class DataCollector {
 	private Unmarshaller unmarshaller;
 	
 	@Autowired
-	private VehicleLocationRepository repo;
+	private VehicleLocationRepository vehicleLocationRepo;
+	
+	@Autowired
+	private VehicleLocationMapper vehicleLocationMapper;
+	
+	@Autowired
+	private RouteMapper routesMapper;
 	
 	//@Scheduled( fixedDelay=10000, initialDelay=1000)
-	public void run() {
+	public void getVehicleLocations() {
 		try {
-			save(new StreamSource(new URL(url + lastTime).openStream()));
-		} catch (XmlMappingException | IOException e) {
-			logger.error("Error reading URL {}{}", url, lastTime, e);
+			Source source = new StreamSource(new URL(vehicleLocationsUrl + lastTime).openStream());
+			saveVehicleLocations(source);
+		} catch (XmlMappingException | IOException | ParseException e) {
+			logger.error("Error reading URL {}{}", vehicleLocationsUrl, lastTime, e);
 		}
 	}
 	
-	public void save(Source source) throws XmlMappingException, IOException {
-		VehicleLocations l = (VehicleLocations)unmarshaller.unmarshal( source);
-		lastTime = l.getLastTime().getTime();
-		
-		List<VehicleLocation> vehicleLocations = new ArrayList<>();
-		List<Vehicle> xmlVehicles = l.getVehicles();
-		if( xmlVehicles != null) {
-			for( Vehicle xml : xmlVehicles) {
-				VehicleLocation model = new VehicleLocation();
-				model.setDirTag( xml.getDirTag());
-				model.setHeading( xml.getHeading());
-				model.setId(xml.getId());
-				model.setLat( xml.getLat());
-				model.setLon( xml.getLon());
-				model.setPredictable(xml.isPredictable());
-				model.setRouteTag( xml.getRouteTag());
-				model.setSecsSinceReport( xml.getSecsSinceReport());
-				model.setTime( lastTime);
-				model.setLocation( new Point(xml.getLon(), xml.getLat()));
-				vehicleLocations.add(model);
-			}
-		}
+	public void saveVehicleLocations(Source source) throws XmlMappingException, IOException, ParseException {
+		List<VehicleLocation> vehicleLocations = vehicleLocationMapper.map(source);
 		logger.debug("Saving {} vehicle location reports", vehicleLocations.size());
-		repo.save(vehicleLocations);
+		vehicleLocationRepo.save(vehicleLocations);
+	}
+	
+	public void saveRoutesAndStop() {
+		try {
+			Source source = new StreamSource(new URL(routesUrl).openStream());
+			List<String> routeTags = routesMapper.getRouteTags(source);
+			if( routeTags != null) {
+				for( String routeTag : routeTags) {
+					logger.info("Route {}", routeTag);
+					source = new StreamSource(new URL(stopsUrl + routeTag).openStream());
+					routesMapper.saveRoutesAndStops(source);
+				}
+			}
+		} catch (XmlMappingException | IOException | ParseException e) {
+			logger.error("Error reading URL {}", routesUrl, e);
+		}
 	}
 }

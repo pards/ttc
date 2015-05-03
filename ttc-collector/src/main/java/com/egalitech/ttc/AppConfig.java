@@ -7,12 +7,11 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import com.egalitech.ttc.xml.Body;
 import com.egalitech.ttc.xml.LastTime;
 import com.egalitech.ttc.xml.Route;
-import com.egalitech.ttc.xml.RouteConfig;
 import com.egalitech.ttc.xml.Stop;
 import com.egalitech.ttc.xml.Vehicle;
-import com.egalitech.ttc.xml.VehicleLocations;
 
 @Configuration
 @EnableAsync
@@ -23,12 +22,11 @@ public class AppConfig {
 	public Unmarshaller jaxbUnmarshaller() {
 		Jaxb2Marshaller result = new Jaxb2Marshaller();
 		result.setClassesToBeBound(
+			Body.class,
 			LastTime.class,
 			Route.class,
-			RouteConfig.class,
 			Stop.class,
-			Vehicle.class,
-			VehicleLocations.class
+			Vehicle.class
 		);
 		return result;
 	}
