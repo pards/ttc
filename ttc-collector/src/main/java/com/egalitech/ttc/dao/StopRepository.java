@@ -6,4 +6,6 @@ import com.egalitech.ttc.model.Stop;
 
 public interface StopRepository extends CrudRepository<Stop,Long>{
 
+	Stop findById(String stopId);
+
 }

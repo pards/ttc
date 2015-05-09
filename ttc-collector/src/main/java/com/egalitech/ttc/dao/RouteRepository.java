@@ -6,4 +6,6 @@ import com.egalitech.ttc.model.Route;
 
 public interface RouteRepository extends CrudRepository<Route,Long>{
 
+	Route findByTag(String tag);
+
 }

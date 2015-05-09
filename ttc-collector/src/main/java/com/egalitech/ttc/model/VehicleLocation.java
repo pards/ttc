@@ -6,35 +6,31 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 
-import org.hibernate.annotations.Type;
-
-import com.vividsolutions.jts.geom.Point;
-
 @Entity
 public class VehicleLocation {
 
     @Id
     @SequenceGenerator(name="vehicle_location_seq", sequenceName="vehicle_location_seq")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="vehicle_location_seq")
-    private int vehicleId;
+    private Integer vehicleId;
 	
 	private String id;
 	private String routeTag;
 	private String dirTag;
-	private float lat;
-	private float lon;
-	private float heading;
+	private double lat;
+	private double lon;
+	private double heading;
 	private int secsSinceReport;
 	private boolean predictable;
 	private long time;
 	
-	@Type(type="org.hibernate.spatial.GeometryType")
-	private Point location;
+//	@Type(type="org.hibernate.spatial.GeometryType")
+//	private Point location;
 	
-	public int getVehicleId() {
+	public Integer getVehicleId() {
 		return vehicleId;
 	}
-	public void setVehicleId(int vehicleId) {
+	public void setVehicleId(Integer vehicleId) {
 		this.vehicleId = vehicleId;
 	}
 	public String getId() {
@@ -55,22 +51,22 @@ public class VehicleLocation {
 	public void setDirTag(String dirTag) {
 		this.dirTag = dirTag;
 	}
-	public float getLat() {
+	public double getLat() {
 		return lat;
 	}
-	public void setLat(float lat) {
+	public void setLat(double lat) {
 		this.lat = lat;
 	}
-	public float getLon() {
+	public double getLon() {
 		return lon;
 	}
-	public void setLon(float lon) {
+	public void setLon(double lon) {
 		this.lon = lon;
 	}
-	public float getHeading() {
+	public double getHeading() {
 		return heading;
 	}
-	public void setHeading(float heading) {
+	public void setHeading(double heading) {
 		this.heading = heading;
 	}
 	public int getSecsSinceReport() {
@@ -91,10 +87,10 @@ public class VehicleLocation {
 	public void setTime(long time) {
 		this.time = time;
 	}
-	public Point getLocation() {
-		return location;
-	}
-	public void setLocation(Point location) {
-		this.location = location;
-	}
+//	public Point getLocation() {
+//		return location;
+//	}
+//	public void setLocation(Point location) {
+//		this.location = location;
+//	}
 }

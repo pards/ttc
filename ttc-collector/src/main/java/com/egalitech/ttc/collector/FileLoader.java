@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +30,12 @@ public class FileLoader {
 		) {
 			String line;
 			int count = 0;
-			while ((line = br.readLine()) != null && count < 10) {
+			while ((line = br.readLine()) != null ) {
 				try{
 					dataCollector.saveVehicleLocations( new StringSource( line));
+					if( count % 1000 == 0) {
+						logger.info("Processed line {}", count);
+					}
 				}
 				catch(Exception x) {
 					logger.error("{}: {}", x.toString(), line);
