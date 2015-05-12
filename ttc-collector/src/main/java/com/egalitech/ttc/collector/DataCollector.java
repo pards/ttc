@@ -48,7 +48,7 @@ public class DataCollector {
 	@Autowired
 	private RouteMapper routesMapper;
 	
-	@Scheduled( fixedDelay=10000, initialDelay=1000)
+	@Scheduled( fixedDelay=15000, initialDelay=1000)
 	public void getVehicleLocations() {
 		try {
 			Source source = new StreamSource(new URL(vehicleLocationsUrl + lastTime).openStream());
