@@ -1,4 +1,7 @@
 
+# EB Setup
+http://blog.goforyt.com/laravel-aws-elastic-beanstalk-dev-guide/
+
 	CREATE EXTENSION postgis;
 	SELECT PostGIS_full_version();
 
